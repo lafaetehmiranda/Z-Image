@@ -1,0 +1,16 @@
+# Ultra-minimal Z-Image API - Just the API skeleton
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install only what we absolutely need
+RUN pip install --no-cache-dir fastapi==0.115.6 uvicorn==0.34.0
+
+# Copy API
+COPY docker_api_simple.py .
+
+# Expose port
+EXPOSE 8002
+
+# Run
+CMD ["python3", "-m", "uvicorn", "docker_api_simple:app", "--host", "0.0.0.0", "--port", "8002"]

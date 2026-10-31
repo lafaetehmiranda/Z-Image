@@ -1,0 +1,21 @@
+# Minimal Z-Image - API only (no model pre-download)
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install everything in one layer to avoid I/O issues
+RUN pip install --no-cache-dir \
+    fastapi==0.115.6 \
+    uvicorn==0.34.0 \
+    python-multipart \
+    && apt-get update \
+    && apt-get install -y curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy only the API file
+COPY docker_api_simple.py app.py
+
+ENV PORT=8002
+EXPOSE 8002
+
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8002"]

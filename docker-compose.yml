@@ -1,0 +1,53 @@
+# =============================================================================
+# Z-Image Docker Compose
+# =============================================================================
+# Text-to-Image Generation AI powered by Z-Image-Turbo
+# 
+# Usage:
+#   docker-compose up -d          # Build and start
+#   docker-compose logs -f        # View logs
+#   docker-compose down           # Stop
+#
+# Access: http://localhost:8002/docs
+# =============================================================================
+
+services:
+  zimage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zimage-api:latest
+    container_name: zimage-server
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    volumes:
+      - zimage-models:/cache
+    environment:
+      - MODEL_NAME=Tongyi-MAI/Z-Image-Turbo
+      - CACHE_DIR=/cache
+      - PORT=8002
+      - ZIMAGE_ATTENTION=_native_flash
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+    labels:
+      com.docker.compose.project: "zimage"
+      app.name: "Z-Image API"
+      app.description: "Text-to-Image AI Generation"
+      app.version: "1.0.0"
+    # Uncomment for GPU support (NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  zimage-models:
+    name: zimage-models

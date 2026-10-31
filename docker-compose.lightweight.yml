@@ -1,0 +1,28 @@
+services:
+  z-image:
+    build:
+      context: .
+      dockerfile: Dockerfile.lightweight
+    image: z-image-lightweight:latest
+    container_name: zimage-server-lite
+    ports:
+      - "8002:8002"
+    volumes:
+      - zimage-cache:/cache
+    environment:
+      - MODEL_NAME=Tongyi-MAI/Z-Image-Turbo
+      - CACHE_DIR=/cache
+      - HF_HOME=/cache
+      - TORCH_HOME=/cache
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+        reservations:
+          memory: 8G
+
+volumes:
+  zimage-cache:
+    driver: local
+
